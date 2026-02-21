@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IncredeBIN Points</title>
+    <style>
+        /* Body - green eco vibe with gradient + leaves pattern */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #e0f7e9, #c1f0d6);
+            color: #145214;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><circle cx="25" cy="25" r="5" fill="%2327ae60"/></svg>');
+            background-repeat: repeat;
+        }
+
+        /* Title */
+        h2 {
+            color: #27ae60;
+            font-size: 3em;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #145214;
+            margin-top: 40px;
+        }
+
+        /* Input fields & button */
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid #27ae60;
+            border-radius: 5px;
+            outline: none;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2ecc71;
+        }
+
+        /* Table */
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 60%;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+            background-color: #eafaf1;
+        }
+
+        th {
+            border: 2px solid #27ae60;
+            padding: 12px;
+            background-color: #a8e6a1;
+            color: #145214;
+            font-size: 1.2em;
+        }
+
+        td {
+            border: 1px solid #27ae60;
+            padding: 10px;
+            color: #145214;
+            font-weight: bold;
+        }
+
+        td:first-child {
+            color: #27ae60; /* Name column green */
+        }
+
+        td:last-child {
+            color: #27ae60; /* Points column green */
+        }
+
+        /* Responsive for mobile */
+        @media screen and (max-width: 600px) {
+            table {
+                width: 90%;
+            }
+            input, button {
+                width: 80%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<h2>IncredeBIN Points</h2>
+
+<input type="text" id="name" placeholder="Enter Name">
+<input type="number" id="points" placeholder="Enter Points">
+<br>
+<button onclick="saveOrUpdate()">Save / Update</button>
+
+<h3>Leaderboard</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Points</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+    // Load saved players from LocalStorage
+    let players = JSON.parse(localStorage.getItem("players")) || [];
+
+    // Display leaderboard
+    function displayData() {
+        let table = document.getElementById("tableBody");
+        table.innerHTML = "";
+
+        // Sort from highest points to lowest
+        players.sort((a,b) => b.points - a.points);
+
+        players.forEach(player => {
+            let row = table.insertRow();
+            row.insertCell(0).innerHTML = player.name;
+            row.insertCell(1).innerHTML = player.points;
+        });
+    }
+
+    // Save or Update Points
+    function saveOrUpdate() {
+        let name = document.getElementById("name").value.trim();
+        let points = parseInt(document.getElementById("points").value);
+
+        if(name === "" || isNaN(points)) {
+            alert("Please fill all fields correctly!");
+            return;
+        }
+
+        // Check if player already exists
+        let existing = players.find(p => p.name.toLowerCase() === name.toLowerCase());
+
+        if(existing) {
+            existing.points += points; // update points
+        } else {
+            players.push({name: name, points: points}); // add new
+        }
+
+        // Save to LocalStorage
+        localStorage.setItem("players", JSON.stringify(players));
+
+        displayData();
+
+        // Clear inputs
+        document.getElementById("name").value = "";
+        document.getElementById("points").value = "";
+    }
+
+    displayData();
+
+</script>
+
+</body>
+</html>
